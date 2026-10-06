@@ -1,0 +1,86 @@
+[
+  {
+    "name": "excavation",
+    "source": "Erdbau bagger tiefbau/IMG_8680.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 420240
+  },
+  {
+    "name": "site-team",
+    "source": "Erdbau bagger tiefbau/IMG_7464.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 286192
+  },
+  {
+    "name": "shaft-installation",
+    "source": "Erdbau bagger tiefbau/IMG_8440.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 612558
+  },
+  {
+    "name": "utility-ducts",
+    "source": "kanalbau/IMG_7482.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 590672
+  },
+  {
+    "name": "trench-pipework",
+    "source": "kanalbau/IMG_8495.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 394188
+  },
+  {
+    "name": "drainage-connections",
+    "source": "kanalbau/IMG_9320.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 372020
+  },
+  {
+    "name": "duct-entry",
+    "source": "kanalbau/IMG_9343.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 442586
+  },
+  {
+    "name": "paved-path",
+    "source": "pfalaster arbeit/IMG_8246.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 314908
+  },
+  {
+    "name": "paving-detail",
+    "source": "pfalaster arbeit/IMG_8218.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 418968
+  },
+  {
+    "name": "outdoor-steps",
+    "source": "pfalaster arbeit/IMG_9496.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 231326
+  },
+  {
+    "name": "paving-worker",
+    "source": "pfalaster arbeit/IMG_9685.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 341282
+  },
+  {
+    "name": "paving-along-tracks",
+    "source": "pfalaster arbeit/IMG_7381.HEIC",
+    "width": 1280,
+    "height": 1707,
+    "bytes": 459682
+  }
+]

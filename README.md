@@ -1,6 +1,6 @@
 # ALFA66 website
 
-Next.js App Router and TypeScript website, designed around the supplied ALFA66 mockup.
+Next.js App Router and TypeScript website with a light, olive-green design and locally served Nunito typography.
 
 ## Development
 
@@ -21,22 +21,29 @@ If OneDrive marks generated files read-only and a rebuild fails with EPERM, stop
 - `app/(en)/`: English document layout and static English pages under `/en/`, covering every German route.
 - `components/pages/`: shared page layouts used by both languages.
 - `components/`: navigation, branding, icons, service cards, personnel cards, team process, project filters, contact form, photo placeholders and footer.
-- `lib/site.ts`: contact details, navigation, service content, personnel roles, project categories and inquiry URL helper.
-- `styles/globals.css`: responsive styles matching the mockup's white, olive green and dark green design.
+- `components/HomeServices.tsx`, `HomeWork.tsx`, `HomeProcess.tsx`: homepage service overview, real work photographs and three-step staffing inquiry process.
+- `components/HomeScrollReveal.tsx`: staggered, one-time entrances when homepage sections scroll into view. Keyboard focus reveals content immediately, and changing reduced-motion preferences cancels active animations.
+- `lib/site.ts`: contact details, navigation, service content, image assignments, galleries, personnel roles, project categories and inquiry URL helper.
+- `lib/photos.ts`: photograph metadata, responsive assets, alt text and crop positions.
+- `styles/globals.css`: responsive styles, rounded typography, homepage entrance animations and hover effects. Motion respects reduced-motion preferences and content remains readable without JavaScript.
 - `public/`: preserved images, project photos, logo, fonts and reserved team folder.
 - `legacy/`: original exported website, preserved as an archive and excluded from the new build.
 
 ## Photos and verified content
 
-All photo slots currently use `components/MediaPlaceholder.tsx`. To use a photo later, add it under `public/` and pass its URL through the `src` prop:
+Twelve approved photos from `photo-candidates/SHORTLIST.md` are installed across the homepage, personnel, projects, company, careers, small-project and service pages. Service detail pages include photo galleries. Production files in `public/images/work/` are exported from the HEIC originals with 1280px and 640px WebP variants; the originals are preserved.
+
+The redesigned homepage uses real construction photographs throughout, with IMG_8246's curved paved path in the split hero. Nunito's variable font and its SIL Open Font License are stored in `public/fonts/Nunito-Variable.ttf` and `public/fonts/Nunito-OFL.txt`; visitors do not request fonts from an external service.
+
+Two generic machinery illustrations fill the missing wheel-loader and truck personnel photos. They live in `public/images/generated/` and are visibly labelled as AI-generated in German and English. Project references use real photos only.
+
+Asset URLs, translated alt-text keys and crop positions live in `lib/photos.ts`. Assignments and service galleries live in `lib/site.ts`. For example:
 
 ```tsx
-<MediaPlaceholder label="Unser Team" src="/team/team.jpg" className="company-media" />
+<MediaPlaceholder label="Unser Team" photo={photos.siteTeam} className="company-media" />
 ```
 
-The original photos remain available under `public/`. The new layout does not require them.
-
-Project cards currently describe categories and are explicitly placeholders. Replace them with verified projects, descriptions and photographs in `lib/site.ts`. Client names, testimonials and company statistics from the mockup have not been invented. Existing phone, email and address are retained.
+Image placements, original filenames, generated-image prompts and export details are documented in [photo-candidates/IMPLEMENTED.md](photo-candidates/IMPLEMENTED.md). Reference captions describe visible work; client names, locations and company statistics should be added only when verified. Existing contact details are retained.
 
 ## Working interactions
 

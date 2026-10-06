@@ -30,7 +30,7 @@ test("English content is present before JavaScript runs", async ({ browser }) =>
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:4173/en/");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  await expect(page.locator("h1")).toContainText("Civil engineering.");
+  await expect(page.locator("h1")).toContainText("Building together.");
   await expect(page.locator(".navigation")).toContainText("Services");
   await expect(page).toHaveTitle(/Skilled people/);
   await expect(page.locator('link[hreflang="de"]')).toHaveAttribute("href", "/");
@@ -92,6 +92,10 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeHidden();
     }
     await page.goto("/en/");
+    await page.locator(".hero").evaluate(async element => {
+      await document.fonts.ready;
+      await Promise.all(element.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {})));
+    });
     await page.screenshot({ path: "test-results/english-" + width + ".png" });
   });
 }

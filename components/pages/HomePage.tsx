@@ -1,13 +1,11 @@
 "use client";
-import { useTranslation } from "@/components/LanguageProvider";
 import Hero from "@/components/Hero";
-import FeatureStrip from "@/components/FeatureStrip";
-import Services from "@/components/Services";
-import ServiceOverview from "@/components/ServiceOverview";
-import TeamProcess from "@/components/TeamProcess";
-import Personnel from "@/components/Personnel";
+import HomeServices from "@/components/HomeServices";
+import HomeWork from "@/components/HomeWork";
+import HomeProcess from "@/components/HomeProcess";
+import References from "@/components/References";
 import ContactSection from "@/components/ContactSection";
+import HomeScrollReveal from "@/components/HomeScrollReveal";
 export default function HomePage() {
-  const { locale, t, localizeHref } = useTranslation();
-  return <><Hero /><FeatureStrip /><ServiceOverview /><Services /><Personnel /><TeamProcess /><ContactSection /></>;
+  return <HomeScrollReveal><Hero /><HomeServices /><HomeWork /><HomeProcess /><References /><ContactSection /></HomeScrollReveal>;
 }

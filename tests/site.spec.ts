@@ -78,6 +78,10 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       expect(sizes.content, route).toBeLessThanOrEqual(sizes.viewport + 1);
     }
     await page.goto("/");
+    await page.locator(".hero").evaluate(async element => {
+      await document.fonts.ready;
+      await Promise.all(element.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {})));
+    });
     await page.screenshot({ path: "test-results/home-viewport-" + width + ".png" });
     await page.screenshot({ path: "test-results/home-" + width + ".png", fullPage: true });
   });
