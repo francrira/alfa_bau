@@ -14,14 +14,15 @@ export default function Header() {
   const pathname = usePathname();
   const currentPath = stripLocale(pathname);
   const [open, setOpen] = useState(false);
+  const [interactive, setInteractive] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => { setInteractive(true); setOpen(false); }, [pathname]);
   useEffect(() => {
     const escape = (event: KeyboardEvent) => { if (event.key === "Escape" && open) { setOpen(false); menuButton.current?.focus(); } };
     document.addEventListener("keydown", escape);
     return () => document.removeEventListener("keydown", escape);
   }, [open]);
-  return <header className="site-header"><div className="container navbar">
+  return <header className={"site-header" + (interactive ? " is-interactive" : "")}><div className="container navbar">
     <Link className="brand-link" href={localizeHref("/")} aria-label={t("ALFA66 – Startseite")} onClick={() => setOpen(false)}><Brand /></Link>
     <div className="header-controls"><LanguageSwitch /><button ref={menuButton} className="menu-toggle" aria-label={t(open ? "Menü schließen" : "Menü öffnen")} aria-expanded={open} aria-controls="navigation" onClick={() => setOpen(!open)}><Icon name={open ? "close" : "menu"} /></button></div>
     <nav id="navigation" aria-label={t("Hauptnavigation")} className={"navigation" + (open ? " is-open" : "")}>

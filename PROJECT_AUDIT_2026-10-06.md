@@ -150,3 +150,5 @@ Once a deployment exists, inspect HTTPS and certificate configuration, HTTP secu
 Deploy the generated `out/` directory, as the repository specifies. Keep raw photo candidates, Git metadata, development files and the legacy archive out of the public upload. After deployment and Strix reauthentication, a scan scoped to the published site can supplement these local findings.
 
 Recommended order: fix the form privacy behavior and publication content, standardize on supported Node and repeat the build checks, improve navigation/image loading and asset packaging, complete deployment metadata/configuration, then run the public-site review.
+
+Follow-up: the site was subsequently reviewed online, and approved repository fixes were implemented. See [the live review's follow-up](LIVE_SITE_AUDIT_2026-10-06.md) and [deployment instructions](deployment/README.md) for the tested changes and remaining hosting requirements. The earlier 1440px image observation alone does not establish a wasted request, because the hero and service card can need different variants; regression checks at 390px and 1024px confirm the actual unused-preload issue and its fix.

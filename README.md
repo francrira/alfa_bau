@@ -4,14 +4,14 @@ Next.js App Router and TypeScript website with a light, olive-green design and l
 
 ## Development
 
-Use a supported Node.js LTS release (Node.js 22 or newer is recommended).
+Use Node.js 24 LTS, selected by `.nvmrc`. Maintained Node.js 22 is also supported. Node.js 20 and 21 are no longer supported.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. Check types with `npm run typecheck` and build with `npm run build`. The build produces the static website in `out/`; deploy that folder.
+Open http://localhost:3000. Check types with `npm run typecheck` and build with `npm run build`. The build produces the static website in `out/` and prepares its Apache `.htaccess`; deploy that folder, including hidden files. See [deployment instructions](deployment/README.md) before publishing.
 
 If OneDrive marks generated files read-only and a rebuild fails with EPERM, stop any running development server and remove only the generated `.next/` and `out/` folders before rebuilding. Keeping the working checkout outside OneDrive also avoids its file-locking behavior.
 
@@ -27,7 +27,7 @@ If OneDrive marks generated files read-only and a rebuild fails with EPERM, stop
 - `lib/photos.ts`: photograph metadata, responsive assets, alt text and crop positions.
 - `styles/globals.css`: responsive styles, rounded typography, homepage entrance animations and hover effects. Motion respects reduced-motion preferences and content remains readable without JavaScript.
 - `public/`: preserved images, project photos, logo, fonts and reserved team folder.
-- `legacy/`: original exported website, preserved as an archive and excluded from the new build.
+- `legacy/`: original exported website, preserved as an archive and excluded from the new build. Unused original public images and Montserrat fonts are retained under `legacy/public-assets/` so they are no longer published.
 
 ## Photos and verified content
 
@@ -52,6 +52,8 @@ Image placements, original filenames, generated-image prompts and export details
 - Service, personnel and career inquiry buttons preselect the matching topic in the contact form.
 - Reference cards filter by project category.
 - Contact form validates required fields and prepares an email draft in the visitor's email application. The visitor sends it there; attachments can be added there. There is no automatic sending service or upload backend.
+- Form controls stay disabled until the submit handler is ready. Without JavaScript, a direct email/telephone fallback remains available and form data cannot enter the URL.
+- Mobile navigation stays visible without JavaScript and collapses into its interactive menu when JavaScript is ready.
 - Telephone, email and map links work without an embedded third-party map.
 - Keyboard focus styles, skip link and reduced-motion support.
 
@@ -68,7 +70,7 @@ Playwright uses an installed Google Chrome browser and a local server for `out/`
 
 ## Old website URLs
 
-Configure permanent redirects at your static host before deployment, including the old `.html` variants:
+The generated Apache `.htaccess` contains permanent redirects for these old URLs and their `.html` variants. Other static hosts require equivalent host-level rules:
 
 - `/services` to `/leistungen`
 - `/services/gardening` to `/leistungen/gartenbau`
@@ -83,7 +85,7 @@ Serve `legacy/` as a static directory if you need to preview the original export
 
 Use the DE / EN switch in the header, including on mobile. German stays at the existing URLs; English is available under `/en/` (for example `/en/leistungen/`). Every internal link retains the selected language. Switching languages keeps the current page, query parameters and anchor, including the selected inquiry topic.
 
-Both languages are exported as static HTML with the correct document language, translated metadata and alternate-language links. English content is available before JavaScript runs. No external translation widget or service is required.
+Both languages are exported as static HTML with the correct document language, translated metadata, absolute canonical URLs and alternate-language links. `/projekte/` uses `/referenzen/` as its canonical route in each language. `robots.txt` and `sitemap.xml` are generated for `https://alfa66bau.de`. English content is available before JavaScript runs. No external translation widget or service is required.
 
 German content remains in the shared components and `lib/site.ts`. English translations are maintained in `lib/translations/en.json`; add the matching English translation whenever new German copy is introduced. The translation helper and locale URL helpers live in `lib/i18n.ts`.
 

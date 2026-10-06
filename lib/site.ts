@@ -1,4 +1,5 @@
 import { photos } from "./photos";
+export const siteUrl = "https://alfa66bau.de";
 export const company = {
   name: "Alfa66Bau GmbH",
   phone: "+49 160 96341086",

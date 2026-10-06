@@ -33,8 +33,8 @@ test("English content is present before JavaScript runs", async ({ browser }) =>
   await expect(page.locator("h1")).toContainText("Building together.");
   await expect(page.locator(".navigation")).toContainText("Services");
   await expect(page).toHaveTitle(/Skilled people/);
-  await expect(page.locator('link[hreflang="de"]')).toHaveAttribute("href", "/");
-  await expect(page.locator('link[hreflang="en"]')).toHaveAttribute("href", "/en/");
+  await expect(page.locator('link[hreflang="de"]')).toHaveAttribute("href", "https://alfa66bau.de/");
+  await expect(page.locator('link[hreflang="en"]')).toHaveAttribute("href", "https://alfa66bau.de/en/");
   await context.close();
 });
 

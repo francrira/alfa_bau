@@ -11,9 +11,11 @@ export default function ContactForm() {
   const [inquiry, setInquiry] = useState("projekt");
   const [draftReady, setDraftReady] = useState(false);
   const [mailHref, setMailHref] = useState("");
+  const [interactive, setInteractive] = useState(false);
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get("anfrage");
     if (requested && options.some(option => option.slug === requested)) setInquiry(requested);
+    setInteractive(true);
   }, []);
   function prepareEmail(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,14 +33,17 @@ export default function ContactForm() {
     setDraftReady(true);
     window.location.href = href;
   }
-  return <form id="anfrage" className="contact-form" onSubmit={prepareEmail} onChange={() => setDraftReady(false)}>
+  return <form id="anfrage" className="contact-form" method="post" onSubmit={prepareEmail} onChange={() => setDraftReady(false)}>
     <h2>{t("Ihr Projekt. Unsere Unterstützung.")}</h2><p className="form-intro">{t("Worum geht es? Wir freuen uns auf Ihre Anfrage.")}</p>
+    {!interactive && <p className="form-fallback">{t("Sie können uns direkt per E-Mail oder Telefon kontaktieren. Das Formular benötigt JavaScript.")} <a href={"mailto:" + company.email}>{company.email}</a> · <a href={company.phoneHref}>{company.phone}</a></p>}
+    <fieldset className="form-fields" disabled={!interactive} aria-label={t("Ihre Anfrage")}>
     <div className="form-row"><label htmlFor="name">{t("Name ")}<span>*</span><input id="name" name="name" autoComplete="name" required maxLength={100} placeholder={t("Ihr Name")} onInput={event => event.currentTarget.setCustomValidity("")} /></label><label htmlFor="email">{t("E-Mail ")}<span>*</span><input id="email" name="email" type="email" autoComplete="email" required maxLength={180} placeholder={t("ihre@email.de")} /></label></div>
     <div className="form-row"><label htmlFor="phone">{t("Telefon")}<input id="phone" name="phone" type="tel" autoComplete="tel" maxLength={50} placeholder={t("Für Rückfragen (optional)")} /></label><label htmlFor="inquiry">{t("Ihre Anfrage")}<select id="inquiry" name="inquiry" value={inquiry} onChange={event => setInquiry(event.target.value)}>{options.map(option => <option value={option.slug} key={option.slug}>{t(option.title)}</option>)}</select></label></div>
     <label htmlFor="subject">{t("Betreff")}<input id="subject" name="subject" maxLength={180} placeholder={t("Eine kurze Beschreibung Ihres Vorhabens")} /></label>
     <label htmlFor="message">{t("Nachricht ")}<span>*</span><textarea id="message" name="message" rows={5} required maxLength={4000} placeholder={t("Was planen Sie? Wo und wann benötigen Sie Unterstützung?")} onInput={event => event.currentTarget.setCustomValidity("")} /></label>
     <p className="form-note">{t("* Pflichtfelder. Der Button öffnet Ihre E-Mail-App mit Ihrer Anfrage. Versenden Sie die E-Mail dort; Anhänge können Sie dort hinzufügen.")}</p>
     <button className="button" type="submit">{t("Anfrage als E-Mail öffnen ")}<Icon name="arrow" /></button>
+    </fieldset>
     {draftReady && <div className="form-status" role="status"><strong>{t("Ihre Anfrage ist vorbereitet.")}</strong><p>{t("Bitte senden Sie die E-Mail in Ihrer E-Mail-App. Falls sich keine App geöffnet hat, ")}<a href={localizeHref(mailHref)}>{t("öffnen Sie den Entwurf erneut")}</a> {t("oder schreiben Sie an ")}<a href={localizeHref("mailto:" + company.email)}>{company.email}</a>.</p></div>}
   </form>;
 }
