@@ -49,3 +49,14 @@ export const projects = [
 ];
 
 export function inquiryHref(type = "projekt") { return "/kontakt?anfrage=" + encodeURIComponent(type) + "#anfrage"; }
+
+// Publication details for the Impressum (§ 5 DDG). Only enter verified facts from the register extract.
+// Fields set to null are omitted from the page; the register entry is legally required for a GmbH.
+export const legal = {
+  managingDirector: "Nimet Rira",
+  contentResponsible: "Nimet Rira",
+  register: null as string | null, // e.g. "Amtsgericht Hamburg, HRB 123456"
+  vatId: null as string | null, // e.g. "DE123456789"
+  // Apache access-log retention on the server (Debian default logrotate: daily, 14 rotations).
+  logRetentionDays: 14,
+};

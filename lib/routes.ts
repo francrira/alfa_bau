@@ -8,6 +8,7 @@ const titles: Record<string, string> = {
   leistungen: "Leistungen", personal: "Personal & Kompetenz", einsatzteams: "Kolonnen & Einsatzteams",
   referenzen: "Projekte & Referenzen", projekte: "Projekte & Referenzen", unternehmen: "Wir sind ALFA66",
   karriere: "Karriere", kleinprojekte: "Kleinprojekte", kontakt: "Kontakt",
+  impressum: "Impressum", datenschutz: "Datenschutzerklärung",
 };
 const description = "ALFA66 Bau GmbH in Hamburg: Fachkräfte, Maschinenführer und Kolonnen für Ihre Bauprojekte. Gemeinsam anpacken.";
 export const canonicalRoutes = [...Object.keys(titles).filter(route => route !== "projekte"), ...services.map(service => "leistungen/" + service.slug)];

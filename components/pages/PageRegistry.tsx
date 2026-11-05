@@ -8,6 +8,7 @@ import CompanyPage from "./CompanyPage";
 import CareerPage from "./CareerPage";
 import SmallProjectsPage from "./SmallProjectsPage";
 import ContactPage from "./ContactPage";
+import { ImpressumPage, PrivacyPage } from "./LegalPages";
 export const pageRegistry = {
   "": HomePage,
   "leistungen": ServicesPage,
@@ -18,5 +19,7 @@ export const pageRegistry = {
   "unternehmen": CompanyPage,
   "karriere": CareerPage,
   "kleinprojekte": SmallProjectsPage,
-  "kontakt": ContactPage
+  "kontakt": ContactPage,
+  "impressum": ImpressumPage,
+  "datenschutz": PrivacyPage
 };

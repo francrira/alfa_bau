@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const routes = ["/", "/leistungen/", "/personal/", "/einsatzteams/", "/referenzen/", "/projekte/", "/unternehmen/", "/karriere/", "/kleinprojekte/", "/kontakt/", "/leistungen/tiefbaukolonnen/", "/leistungen/maschinenfuehrer/", "/leistungen/pflasterkolonnen/", "/leistungen/rohrleitungskolonnen/", "/leistungen/baustellenpersonal/", "/leistungen/flexible-einsatzteams/", "/leistungen/gartenbau/", "/leistungen/tiefbau/", "/leistungen/landschaftsbau/"];
+const routes = ["/", "/leistungen/", "/personal/", "/einsatzteams/", "/referenzen/", "/projekte/", "/unternehmen/", "/karriere/", "/kleinprojekte/", "/kontakt/", "/impressum/", "/datenschutz/", "/leistungen/tiefbaukolonnen/", "/leistungen/maschinenfuehrer/", "/leistungen/pflasterkolonnen/", "/leistungen/rohrleitungskolonnen/", "/leistungen/baustellenpersonal/", "/leistungen/flexible-einsatzteams/", "/leistungen/gartenbau/", "/leistungen/tiefbau/", "/leistungen/landschaftsbau/"];
 test("every page loads without runtime errors or broken internal links", async ({ page, request }) => {
   const errors: string[] = [];
   const links = new Set<string>();
@@ -127,4 +127,19 @@ test("pages carry social previews and business structured data", async ({ page, 
   expect(data).toMatchObject({ "@type": "GeneralContractor", name: "Alfa66Bau GmbH", email: "info@alfa66bau.de", address: { postalCode: "20537", addressLocality: "Hamburg" } });
   await page.goto("/en/kontakt/");
   await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute("content", "en_GB");
+});
+
+test("legal pages are linked from every footer and name the company", async ({ page }) => {
+  await page.goto("/leistungen/");
+  await page.locator("footer").getByRole("link", { name: "Impressum" }).click();
+  await expect(page).toHaveURL(/\/impressum\/$/);
+  await expect(page.locator("main")).toContainText("Geschäftsführer: Nimet Rira");
+  await expect(page.locator("main")).toContainText("Wendenstraße 309");
+  await page.locator("footer").getByRole("link", { name: "Datenschutz" }).click();
+  await expect(page.locator("h1")).toHaveText("Datenschutzerklärung");
+  await expect(page.locator("main")).toContainText("Kontaktformular");
+  await page.goto("/en/");
+  await page.locator("footer").getByRole("link", { name: "Privacy" }).click();
+  await expect(page).toHaveURL(/\/en\/datenschutz\/$/);
+  await expect(page.locator("h1")).toHaveText("Privacy policy");
 });

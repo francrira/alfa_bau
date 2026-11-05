@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import english from "../lib/translations/en.json";
 
-const routes = ["", "leistungen", "personal", "einsatzteams", "referenzen", "projekte", "unternehmen", "karriere", "kleinprojekte", "kontakt", ...["tiefbaukolonnen", "maschinenfuehrer", "pflasterkolonnen", "rohrleitungskolonnen", "baustellenpersonal", "flexible-einsatzteams", "gartenbau", "tiefbau", "landschaftsbau"].map(slug => "leistungen/" + slug)];
+const routes = ["", "leistungen", "personal", "einsatzteams", "referenzen", "projekte", "unternehmen", "karriere", "kleinprojekte", "kontakt", "impressum", "datenschutz", ...["tiefbaukolonnen", "maschinenfuehrer", "pflasterkolonnen", "rohrleitungskolonnen", "baustellenpersonal", "flexible-einsatzteams", "gartenbau", "tiefbau", "landschaftsbau"].map(slug => "leistungen/" + slug)];
 
 test("all English pages render translated content and working localized links", async ({ page, request }) => {
   const errors: string[] = [];

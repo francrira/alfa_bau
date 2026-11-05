@@ -63,7 +63,8 @@ test("search discovery lists working canonical German and English pages", async 
   expect(sitemap.status()).toBe(200);
   const xml = await sitemap.text();
   const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-  expect(urls).toHaveLength(36);
+  expect(urls).toHaveLength(40);
+  expect(urls).toContain("https://alfa66bau.de/impressum/");
   expect(urls).toContain('https://alfa66bau.de/leistungen/pflasterkolonnen/');
   expect(urls).toContain('https://alfa66bau.de/en/leistungen/pflasterkolonnen/');
   expect(urls.some(url => new URL(url).pathname.includes('/projekte/'))).toBe(false);
