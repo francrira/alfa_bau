@@ -17,7 +17,7 @@ RewriteRule ^about-us(?:\.html)?/?$ /unternehmen/ [R=301,END,NC]
 RewriteRule ^contact-us(?:\.html)?/?$ /kontakt/ [R=301,END,NC]
 
 AddType image/webp .webp
-AddType font/ttf .ttf
+AddType font/woff2 .woff2
 
 Header always set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options "DENY"
@@ -33,4 +33,8 @@ Header always set Content-Security-Policy "default-src 'self'; script-src 'self'
 </FilesMatch>
 <FilesMatch "\.(?:js|css)$">
   Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+# Images and fonts keep stable URLs, so cache for a week and revalidate afterwards.
+<FilesMatch "\.(?:webp|jpe?g|png|ico|woff2)$">
+  Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
 </FilesMatch>

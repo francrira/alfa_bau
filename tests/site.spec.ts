@@ -86,3 +86,25 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.screenshot({ path: "test-results/home-" + width + ".png", fullPage: true });
   });
 }
+
+test("inquiry links on the contact page switch the preselected topic", async ({ page }) => {
+  await page.goto("/kontakt/?anfrage=karriere#anfrage");
+  await expect(page.locator("#inquiry")).toHaveValue("karriere");
+  await page.locator("header").getByRole("link", { name: "Projekt anfragen" }).click();
+  await expect(page).toHaveURL(/anfrage=projekt/);
+  await expect(page.locator("#inquiry")).toHaveValue("projekt");
+  await page.goBack();
+  await expect(page.locator("#inquiry")).toHaveValue("karriere");
+});
+
+test("pages carry social previews and business structured data", async ({ page, request }) => {
+  await page.goto("/leistungen/tiefbau/");
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", "Tiefbau | ALFA66");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", "https://alfa66bau.de/images/og.jpg");
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+  expect((await request.get("/images/og.jpg")).status()).toBe(200);
+  const data = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent() ?? "{}");
+  expect(data).toMatchObject({ "@type": "GeneralContractor", name: "Alfa66Bau GmbH", email: "info@alfa66bau.de", address: { postalCode: "20537", addressLocality: "Hamburg" } });
+  await page.goto("/en/kontakt/");
+  await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute("content", "en_GB");
+});

@@ -4,7 +4,7 @@ import path from "node:path";
 const root = path.resolve("out");
 const config = await readFile(path.join(root, ".htaccess"), "utf8");
 const headers = [...config.matchAll(/^Header always set ([\w-]+) "([^"]+)"$/gm)].map(match => [match[1], match[2]]);
-const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".txt": "text/plain", ".xml": "application/xml", ".ttf": "font/ttf", ".ico": "image/x-icon", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml" };
+const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".txt": "text/plain", ".xml": "application/xml", ".woff2": "font/woff2", ".ico": "image/x-icon", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml" };
 http.createServer(async (req, res) => {
   headers.forEach(([name, value]) => res.setHeader(name, value));
   if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405).end(); return; }

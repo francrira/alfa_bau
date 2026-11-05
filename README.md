@@ -33,7 +33,7 @@ If OneDrive marks generated files read-only and a rebuild fails with EPERM, stop
 
 Twelve approved photos from `photo-candidates/SHORTLIST.md` are installed across the homepage, personnel, projects, company, careers, small-project and service pages. Service detail pages include photo galleries. Production files in `public/images/work/` are exported from the HEIC originals with 1280px and 640px WebP variants; the originals are preserved.
 
-The redesigned homepage uses real construction photographs throughout, with IMG_8246's curved paved path in the split hero. Nunito's variable font and its SIL Open Font License are stored in `public/fonts/Nunito-Variable.ttf` and `public/fonts/Nunito-OFL.txt`; visitors do not request fonts from an external service.
+The redesigned homepage uses real construction photographs throughout, with IMG_8246's curved paved path in the split hero. Nunito's variable font and its SIL Open Font License are stored in `public/fonts/Nunito-Variable.woff2` (compressed from the TTF kept in `legacy/public-assets/fonts/`) and `public/fonts/Nunito-OFL.txt`; visitors do not request fonts from an external service.
 
 Two generic machinery illustrations fill the missing wheel-loader and truck personnel photos. They live in `public/images/generated/` and are visibly labelled as AI-generated in German and English. Project references use real photos only.
 

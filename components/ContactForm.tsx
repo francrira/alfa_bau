@@ -1,22 +1,34 @@
 "use client";
 import { useTranslation } from "@/components/LanguageProvider";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import { company, services } from "@/lib/site";
 import Icon from "./Icon";
 
 const options = [{ slug: "projekt", title: "Projektanfrage" }, { slug: "personal", title: "Personalbedarf" }, ...services, { slug: "karriere", title: "Bewerbung / Karriere" }, { slug: "kleinprojekt", title: "Kleinprojekt" }];
+
+// Follows ?anfrage= on every client navigation, including between two inquiry links on the same page.
+// Isolated in its own Suspense boundary so the rest of the form still renders statically.
+function InquiryFromUrl({ onChange }: { onChange: (slug: string) => void }) {
+  const requested = useSearchParams().get("anfrage");
+  useEffect(() => {
+    if (requested && options.some(option => option.slug === requested)) {
+      onChange(requested);
+      // Same-page navigation keeps the scroll position, so bring the form into view explicitly.
+      if (window.location.hash === "#anfrage") document.getElementById("anfrage")?.scrollIntoView({ block: "start" });
+    }
+  }, [requested, onChange]);
+  return null;
+}
+
 export default function ContactForm() {
-  const { locale, t, localizeHref } = useTranslation();
+  const { t, localizeHref } = useTranslation();
   const [inquiry, setInquiry] = useState("projekt");
   const [draftReady, setDraftReady] = useState(false);
   const [mailHref, setMailHref] = useState("");
   const [interactive, setInteractive] = useState(false);
-  useEffect(() => {
-    const requested = new URLSearchParams(window.location.search).get("anfrage");
-    if (requested && options.some(option => option.slug === requested)) setInquiry(requested);
-    setInteractive(true);
-  }, []);
+  useEffect(() => { setInteractive(true); }, []);
   function prepareEmail(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -34,6 +46,7 @@ export default function ContactForm() {
     window.location.href = href;
   }
   return <form id="anfrage" className="contact-form" method="post" onSubmit={prepareEmail} onChange={() => setDraftReady(false)}>
+    <Suspense fallback={null}><InquiryFromUrl onChange={setInquiry} /></Suspense>
     <h2>{t("Ihr Projekt. Unsere Unterstützung.")}</h2><p className="form-intro">{t("Worum geht es? Wir freuen uns auf Ihre Anfrage.")}</p>
     {!interactive && <p className="form-fallback">{t("Sie können uns direkt per E-Mail oder Telefon kontaktieren. Das Formular benötigt JavaScript.")} <a href={"mailto:" + company.email}>{company.email}</a> · <a href={company.phoneHref}>{company.phone}</a></p>}
     <fieldset className="form-fields" disabled={!interactive} aria-label={t("Ihre Anfrage")}>

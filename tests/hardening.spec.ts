@@ -26,7 +26,7 @@ for (const prefix of ["", "/en"]) {
   });
 }
 
-// At these widths, both the hero and any nearby cards select the 640px image.
+// At these widths, both the hero and any nearby cards select the same smaller variant.
 // A 1280px request is therefore wasted, rather than a legitimate second placement.
 for (const width of [390, 1024]) {
   test("the hero downloads one image variant at " + width + "px", async ({ page }) => {
@@ -38,7 +38,7 @@ for (const width of [390, 1024]) {
     });
     await page.waitForLoadState('networkidle');
     const requests = await page.evaluate(() => performance.getEntriesByType('resource')
-      .filter(entry => /\/paved-path(?:-640)?\.webp$/.test(new URL(entry.name).pathname)).map(entry => entry.name));
+      .filter(entry => /\/paved-path(?:-640|-960)?\.webp$/.test(new URL(entry.name).pathname)).map(entry => entry.name));
     expect(requests).toHaveLength(1);
   });
 }

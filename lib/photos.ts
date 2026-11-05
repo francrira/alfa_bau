@@ -1,16 +1,17 @@
 export type SitePhoto = {
   src: string;
   smallSrc: string;
+  mediumSrc: string;
   alt: string;
   position?: string;
   generated?: boolean;
 };
 
 function work(name: string, alt: string, position = "50% 50%"): SitePhoto {
-  return { src: "/images/work/" + name + ".webp", smallSrc: "/images/work/" + name + "-640.webp", alt, position };
+  return { src: "/images/work/" + name + ".webp", smallSrc: "/images/work/" + name + "-640.webp", mediumSrc: "/images/work/" + name + "-960.webp", alt, position };
 }
 function illustration(name: string, alt: string): SitePhoto {
-  return { src: "/images/generated/" + name + ".webp", smallSrc: "/images/generated/" + name + "-640.webp", alt, generated: true };
+  return { src: "/images/generated/" + name + ".webp", smallSrc: "/images/generated/" + name + "-640.webp", mediumSrc: "/images/generated/" + name + "-960.webp", alt, generated: true };
 }
 
 // Approved shortlist sources and export provenance: photo-candidates/IMPLEMENTED.md.
