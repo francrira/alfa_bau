@@ -44,3 +44,17 @@ These tasks remain outside the code changes:
 - Supply the company's verified representative/register details and actual hosting/privacy information for Impressum and Datenschutz pages. These facts must not be invented.
 
 Original imagery remains in the archive. The public asset inventory is approximately 6.8 MB after unused images/fonts were moved out of `public/`, compared with approximately 101 MB before this change.
+
+## Contact form
+
+The form posts JSON to `/api/contact.php` (source: `public/api/contact.php`), which emails the enquiry to `info@alfa66bau.de` through Google Workspace SMTP. If the endpoint fails, visitors are offered an email draft and the phone number instead.
+
+One-time server setup:
+
+1. Install PHP for Apache: `sudo apt install -y libapache2-mod-php && sudo systemctl restart apache2`.
+2. In the Google Admin console / account of `info@alfa66bau.de`, enable 2-Step Verification and create an App Password.
+3. Create the config outside the web root, readable by Apache only:
+   `sudo mkdir -p /etc/alfa66bau && sudo cp ~/alfa_bau/deployment/contact-config.example.php /etc/alfa66bau/contact-config.php && sudo nano /etc/alfa66bau/contact-config.php`
+   then `sudo chown root:www-data /etc/alfa66bau/contact-config.php && sudo chmod 640 /etc/alfa66bau/contact-config.php`.
+
+Protections: same-origin JSON POSTs only, mail only ever goes to the company address (visitor address is only Reply-To), header-injection-safe validation, honeypot plus minimum fill time, 5 enquiries per IP per hour and 60 per day overall. Message contents are not logged. Mention the contact form processing in the Datenschutz page.

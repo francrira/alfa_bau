@@ -61,20 +61,19 @@ test("English project filters and email drafts work", async ({ page }) => {
   await page.getByRole("button", { name: "Utility works", exact: true }).click();
   await expect(page.locator(".project-grid .photo-card")).toHaveCount(1);
   await expect(page.locator(".card-category")).toHaveText("Utility works");
+  const sent: Record<string, unknown>[] = [];
+  await page.route("**/api/contact.php", async route => { sent.push(route.request().postDataJSON()); await route.fulfill({ json: { ok: true } }); });
   await page.goto("/en/kontakt/?anfrage=pflasterkolonnen#anfrage");
   await page.locator("#name").fill("   ");
   await page.locator("#email").fill("test@example.com");
   await page.locator("#message").fill("We need a paving crew.");
-  await page.getByRole("button", { name: "Open enquiry in email" }).click();
+  await page.getByRole("button", { name: "Send enquiry" }).click();
   await expect(page.locator("#name")).toBeFocused();
   expect(await page.locator("#name").evaluate((input: HTMLInputElement) => input.validationMessage)).toBe("Please complete this field.");
   await page.locator("#name").fill("Test User");
-  await page.getByRole("button", { name: "Open enquiry in email" }).click();
-  await expect(page.getByRole("status")).toContainText("Your enquiry is ready.");
-  const href = await page.getByRole("link", { name: "open the draft again" }).getAttribute("href");
-  expect(decodeURIComponent(href!)).toContain("Enquiry: Paving crews");
-  expect(decodeURIComponent(href!)).toContain("Phone:");
-  expect(decodeURIComponent(href!)).not.toContain("Anfrage:");
+  await page.getByRole("button", { name: "Send enquiry" }).click();
+  await expect(page.getByRole("status")).toContainText("We have received your enquiry.");
+  expect(sent[0]).toMatchObject({ inquiry: "Pflasterkolonnen", language: "en", message: "We need a paving crew." });
 });
 
 for (const width of [320, 390, 768, 1024, 1440]) {

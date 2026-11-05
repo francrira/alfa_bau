@@ -44,27 +44,47 @@ test("mobile menu supports Escape and closes after navigation", async ({ page })
   await expect(page.getByRole("navigation", { name: "Hauptnavigation" })).toBeHidden();
 });
 
-test("service inquiry preselects the form and validates required fields", async ({ page }) => {
+test("service inquiry preselects the form, validates and sends the enquiry", async ({ page }) => {
+  const sent: Record<string, unknown>[] = [];
+  await page.route("**/api/contact.php", async route => {
+    sent.push(route.request().postDataJSON());
+    await route.fulfill({ json: { ok: true } });
+  });
   await page.goto("/leistungen/pflasterkolonnen/");
   await page.getByRole("link", { name: "Pflasterkolonnen anfragen", exact: true }).click();
   await expect(page.locator("#inquiry")).toHaveValue("pflasterkolonnen");
-  await page.getByRole("button", { name: "Anfrage als E-Mail öffnen" }).click();
+  await page.getByRole("button", { name: "Anfrage senden" }).click();
   await expect(page.locator("#name")).toBeFocused();
-  await expect(page.locator(".form-status")).toHaveCount(0);
   await page.locator("#name").fill("   ");
   await page.locator("#email").fill("test@example.com");
   await page.locator("#message").fill("Testnachricht");
-  await page.getByRole("button", { name: "Anfrage als E-Mail öffnen" }).click();
+  await page.getByRole("button", { name: "Anfrage senden" }).click();
   await expect(page.locator("#name")).toBeFocused();
-  await expect(page.locator(".form-status")).toHaveCount(0);
+  expect(sent).toHaveLength(0);
   await page.locator("#name").fill("Test User");
   await page.locator("#phone").fill("0123456");
-  await page.getByRole("button", { name: "Anfrage als E-Mail öffnen" }).click();
-  await expect(page.locator(".form-status")).toBeVisible();
-  const href = await page.getByRole("link", { name: "öffnen Sie den Entwurf erneut" }).getAttribute("href");
-  expect(decodeURIComponent(href!)).toContain("Anfrage: Pflasterkolonnen");
-  expect(decodeURIComponent(href!)).toContain("Name: Test User");
-  expect(decodeURIComponent(href!)).toContain("Testnachricht");
+  await page.waitForTimeout(3000); // The endpoint ignores forms submitted faster than a person can type.
+  await page.getByRole("button", { name: "Anfrage senden" }).click();
+  await expect(page.getByRole("status")).toContainText("Ihre Anfrage ist bei uns angekommen");
+  expect(sent).toHaveLength(1);
+  expect(sent[0]).toMatchObject({ name: "Test User", email: "test@example.com", phone: "0123456", inquiry: "Pflasterkolonnen", message: "Testnachricht", website: "", language: "de" });
+  expect(sent[0].elapsed).toBeGreaterThanOrEqual(3000);
+  await expect(page.locator("#name")).toHaveValue("");
+});
+
+test("a failed send offers the email draft and phone instead", async ({ page }) => {
+  await page.route("**/api/contact.php", route => route.fulfill({ status: 502, json: { ok: false, error: "delivery" } }));
+  await page.goto("/kontakt/?anfrage=karriere#anfrage");
+  await page.locator("#name").fill("Test User");
+  await page.locator("#email").fill("test@example.com");
+  await page.locator("#message").fill("Bewerbung");
+  await page.getByRole("button", { name: "Anfrage senden" }).click();
+  await expect(page.locator(".form-status-error")).toContainText("konnte gerade nicht gesendet werden");
+  const href = decodeURIComponent((await page.getByRole("link", { name: "öffnen Sie sie als E-Mail" }).getAttribute("href"))!);
+  expect(href).toContain("mailto:info@alfa66bau.de");
+  expect(href).toContain("Anfrage: Bewerbung / Karriere");
+  await expect(page.locator(".form-status-error").getByRole("link", { name: "+49 160 96341086" })).toHaveAttribute("href", "tel:+4916096341086");
+  await expect(page.locator("#name")).toHaveValue("Test User");
 });
 
 for (const width of [320, 390, 768, 1024, 1440]) {

@@ -179,6 +179,8 @@ a.photo-card:hover { border-color: #afc68f; transform: translateY(-3px); }
 .form-fallback { padding: 16px; border-radius: 10px; background: var(--tint); font-size: .9rem; overflow-wrap: anywhere; }
 .form-status { margin-top: 20px; padding: 18px; border-left: 3px solid var(--green); background: #f0f5e8; font-size: .76rem; }
 .form-status p { margin: 8px 0 0; }
+.form-status-error { border-left-color: #b4532a; background: #fbf1ec; }
+.form-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .footer { border-top: 1px solid var(--line); padding-top: 55px; background: #f7f8f5; }
 .footer-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr 1fr 1.2fr; gap: 35px; }
 .footer-about p { margin-top: 22px; font-size: .86rem; max-width: 230px; color: #4d574c; }

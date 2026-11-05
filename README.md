@@ -51,7 +51,7 @@ Image placements, original filenames, generated-image prompts and export details
 - Service cards link to detail pages.
 - Service, personnel and career inquiry buttons preselect the matching topic in the contact form.
 - Reference cards filter by project category.
-- Contact form validates required fields and prepares an email draft in the visitor's email application. The visitor sends it there; attachments can be added there. There is no automatic sending service or upload backend.
+- Contact form validates required fields and sends the enquiry through `public/api/contact.php` (PHP + Google Workspace SMTP, see deployment/README.md). If sending fails it offers an email draft and the phone number.
 - Form controls stay disabled until the submit handler is ready. Without JavaScript, a direct email/telephone fallback remains available and form data cannot enter the URL.
 - Mobile navigation stays visible without JavaScript and collapses into its interactive menu when JavaScript is ready.
 - Telephone, email and map links work without an embedded third-party map.
