@@ -121,45 +121,53 @@ $message = implode("\r\n", [
 ]);
 
 // Minimal SMTP client (implicit TLS on 465, or STARTTLS on 587). Certificates are verified.
-function smtp_send(array $config, string $from, string $to, string $message): bool {
+// On failure, $failure names the SMTP step and the server's reply (never visitor data or the password).
+function smtp_send(array $config, string $from, string $to, string $message, ?string &$failure = null): bool {
     $port = (int)$config['smtp_port'];
     $context = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'peer_name' => $config['smtp_host']]]);
     $target = ($port === 465 ? 'ssl://' : 'tcp://') . $config['smtp_host'] . ':' . $port;
     $socket = @stream_socket_client($target, $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $context);
-    if ($socket === false) return false;
+    if ($socket === false) { $failure = 'connect: ' . $errno . ' ' . $errstr; return false; }
     stream_set_timeout($socket, 15);
-    $read = function () use ($socket): int {
+    $last = '';
+    $step = 'greeting';
+    $read = function () use ($socket, &$last): int {
         $line = '';
         while (($chunk = fgets($socket, 1024)) !== false) {
             $line = $chunk;
             if (strlen($chunk) < 4 || $chunk[3] !== '-') break;
         }
+        $last = trim($line);
         return (int)substr($line, 0, 3);
     };
-    $send = function (string $command, array $expect) use ($socket, $read): bool {
+    $send = function (string $name, string $command, array $expect) use ($socket, $read, &$step): bool {
+        $step = $name;
         fwrite($socket, $command . "\r\n");
         return in_array($read(), $expect, true);
     };
-    $ok = $read() === 220 && $send('EHLO alfa66bau.de', [250]);
+    // Google shows App Passwords in groups of four ("abcd efgh ..."); the spaces are not part of it.
+    $password = str_replace(' ', '', (string)$config['smtp_password']);
+    $ok = $read() === 220 && $send('ehlo', 'EHLO alfa66bau.de', [250]);
     if ($ok && $port !== 465) {
-        $ok = $send('STARTTLS', [220]) && stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT) && $send('EHLO alfa66bau.de', [250]);
+        $ok = $send('starttls', 'STARTTLS', [220]) && stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT) && $send('ehlo-tls', 'EHLO alfa66bau.de', [250]);
     }
     $ok = $ok
-        && $send('AUTH LOGIN', [334])
-        && $send(base64_encode($config['smtp_user']), [334])
-        && $send(base64_encode($config['smtp_password']), [235])
-        && $send('MAIL FROM:<' . $from . '>', [250])
-        && $send('RCPT TO:<' . $to . '>', [250, 251])
-        && $send('DATA', [354])
+        && $send('auth', 'AUTH LOGIN', [334])
+        && $send('auth-user', base64_encode($config['smtp_user']), [334])
+        && $send('auth-password', base64_encode($password), [235])
+        && $send('mail-from', 'MAIL FROM:<' . $from . '>', [250])
+        && $send('rcpt-to', 'RCPT TO:<' . $to . '>', [250, 251])
+        && $send('data', 'DATA', [354])
         // Base64 body lines never start with ".", so no dot-stuffing is needed.
-        && $send($message . "\r\n.", [250]);
+        && $send('message', $message . "\r\n.", [250]);
+    if (!$ok) $failure = $step . ': ' . substr($last, 0, 200);
     @fwrite($socket, "QUIT\r\n");
     fclose($socket);
     return $ok;
 }
 
-if (!smtp_send($config, $from, $config['to'], $message)) {
-    error_log('alfa66 contact: SMTP delivery failed'); // No personal data in the log.
+if (!smtp_send($config, $from, $config['to'], $message, $failure)) {
+    error_log('alfa66 contact: SMTP delivery failed at ' . $failure); // Step and server reply only, no personal data.
     respond(502, ['ok' => false, 'error' => 'delivery']);
 }
 respond(200, ['ok' => true]);
